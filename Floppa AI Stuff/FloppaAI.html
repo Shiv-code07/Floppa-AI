@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<meta name="description" content="Floppa AI — your large-cat sidekick for school. Brought to you by Glungus AI Labs." />
+<title>Floppa AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,700&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;700&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --paper: #131013;
+    --red: #ff2a4d;
+    --red-bright: #ff3a5c;
+    --red-dim: #b81f3a;
+    --red-soft: rgba(255, 42, 77, 0.10);
+    --red-line: rgba(255, 42, 77, 0.22);
+    --text: #f5f5f5;
+    --text-soft: #c8c8c8;
+    --text-dim: #888;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--red-line) 31px, var(--red-line) 32px),
+      radial-gradient(circle at 15% 8%, rgba(255, 42, 77, 0.06), transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(255, 42, 77, 0.04), transparent 40%);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    left: 60px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--red);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @media (max-width: 700px) { body::before { left: 24px; } }
+
+  ::selection { background: var(--red); color: var(--bg); }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 40px 80px 100px;
+    position: relative;
+    z-index: 1;
+  }
+  @media (max-width: 700px) { .container { padding: 20px 20px 60px 50px; } }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .floppa-mascot {
+    width: 110px; height: 110px;
+    flex-shrink: 0;
+    transform: rotate(-4deg);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    border: 3px solid var(--red);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 var(--red-dim);
+    background: var(--paper);
+  }
+  .floppa-mascot img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .floppa-mascot:hover { transform: rotate(2deg) scale(1.05); }
+
+  .title-block h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(2.4rem, 5.5vw, 3.6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--red-bright);
+    text-shadow: 3px 3px 0 var(--bg), 4px 4px 0 var(--red-dim);
+  }
+  .title-block h1 em {
+    font-style: italic;
+    color: var(--text);
+  }
+  .title-block .credit {
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+    color: var(--text-soft);
+    margin-top: 6px;
+    max-width: 480px;
+    line-height: 1.2;
+  }
+  .title-block .credit::before { content: '— '; color: var(--red); }
+
+  .nav-pills {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: transparent;
+    border: 2px solid var(--red);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    color: var(--red);
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.15s ease;
+  }
+  .pill:hover { background: var(--red-soft); transform: translate(-1px, -1px); }
+  .pill.active {
+    background: var(--red);
+    color: var(--bg);
+    box-shadow: 3px 3px 0 var(--red-dim);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--paper);
+    border: 2.5px solid var(--red);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 4px 4px 0 var(--red-dim);
+    position: relative;
+  }
+  .card h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--red-bright);
+  }
+  .card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--red-bright);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .subtitle { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 16px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px dashed var(--red-line);
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+  .status-dot {
+    width: 12px; height: 12px;
+    background: var(--red-bright);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255, 42, 77, 0.3);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(255, 42, 77, 0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(255, 42, 77, 0.05); }
+  }
+  .chat-header .sub {
+    color: var(--text-dim);
+    margin-left: auto;
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+  }
+
+  .messages {
+    min-height: 280px;
+    max-height: 420px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 6px 4px;
+    scroll-behavior: smooth;
+  }
+  .messages::-webkit-scrollbar { width: 8px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+  .messages::-webkit-scrollbar-thumb { background: var(--red-dim); border-radius: 4px; }
+
+  .msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 2px solid var(--red);
+    line-height: 1.45;
+    animation: pop 0.3s ease;
+    color: var(--text);
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .msg.floppa {
+    background: var(--red-soft);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .msg.user {
+    background: rgba(255, 255, 255, 0.03);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    border-style: dashed;
+  }
+  .msg .who {
+    font-weight: 900;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    color: var(--red-bright);
+  }
+
+  .typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+  .typing span {
+    width: 8px; height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2.5px solid var(--red);
+    border-radius: 12px;
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--text);
+    outline: none;
+    transition: all 0.15s;
+  }
+  .input-row input::placeholder { color: var(--text-dim); }
+  .input-row input:focus {
+    box-shadow: 3px 3px 0 var(--red-dim);
+    transform: translate(-1px, -1px);
+  }
+  .send-btn {
+    background: var(--red);
+    color: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    box-shadow: 3px 3px 0 var(--red-dim);
+    transition: all 0.15s;
+  }
+  .send-btn:hover { transform: translate(-1px, -1px); }
+  .send-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--red-dim); }
+
+  .quick-prompts {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .quick-prompts button {
+    background: transparent;
+    border: 1.5px dashed var(--red-line);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .quick-prompts button:hover { background: var(--red-soft); border-style: solid; color: var(--red); }
+
+  .sidebar { display: flex; flex-direction: column; gap: 22px; }
+  .panel {
+    padding: 18px;
+    border-radius: 10px;
+    border: 2px solid var(--red);
+    background: var(--paper);
+    box-shadow: 3px 3px 0 var(--red-dim);
+  }
+
+  .hw-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .hw-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--red-soft);
+    border: 1.5px solid var(--red);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  .hw-list li:hover { transform: translateX(2px); }
+  .hw-list li.done { opacity: 0.5; }
+  .hw-list li.done .text { text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 2px; }
+  .hw-list li .check {
+    width: 18px; height: 18px;
+    border: 2px solid var(--red);
+    border-radius: 4px;
+    background: var(--bg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .hw-list li.done .check::after {
+    content: '✓';
+    color: var(--red);
+    font-weight: 900;
+    font-size: 14px;
+  }
+  .hw-list li .text { flex: 1; }
+  .hw-list li .subj {
+    font-size: 0.7rem;
+    background: var(--red);
+    color: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .hw-list li .del {
+    background: none; border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 4px;
+    opacity: 0.4;
+  }
+  .hw-list li:hover .del { opacity: 1; }
+
+  .hw-add { display: flex; gap: 6px; margin-top: 10px; }
+  .hw-add input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 2px solid var(--red);
+    border-radius: 6px;
+    background: var(--bg);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    color: var(--text);
+  }
+  .hw-add input::placeholder { color: var(--text-dim); }
+  .hw-add button {
+    background: var(--red);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .schedule { display: flex; flex-direction: column; gap: 6px; }
+  .period {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--red-soft);
+    border-radius: 6px;
+    border-left: 4px solid var(--red);
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .period .time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-soft);
+  }
+  .period .name { font-weight: 700; }
+
+  .tip-box p {
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .tip-box .new-tip {
+    margin-top: 12px;
+    background: var(--red);
+    color: var(--bg);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .planner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .planner-grid .panel.full { grid-column: 1 / -1; }
+  @media (max-width: 800px) { .planner-grid { grid-template-columns: 1fr; } }
+
+  .calc-wrap { max-width: 360px; margin: 0 auto; }
+  .calc-display {
+    background: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 12px;
+    padding: 18px 20px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--red-bright);
+    margin-bottom: 12px;
+    overflow-x: auto;
+    white-space: nowrap;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .calc-history {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    text-align: right;
+    min-height: 20px;
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .calc-btn {
+    aspect-ratio: 1;
+    background: var(--paper);
+    border: 2px solid var(--red);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .calc-btn:hover { background: var(--red-soft); }
+  .calc-btn:active { transform: scale(0.95); }
+  .calc-btn.op { background: var(--red-soft); color: var(--red-bright); }
+  .calc-btn.eq { background: var(--red); color: var(--bg); border-color: var(--red); }
+  .calc-btn.clr { color: var(--text-soft); }
+  .calc-btn.wide { grid-column: span 2; aspect-ratio: 2 / 1; }
+
+  .calc-floppa-line {
+    text-align: center;
+    margin-top: 16px;
+    font-family: 'Caveat', cursive;
+    font-size: 1.2rem;
+    color: var(--text-soft);
+  }
+
+  .study-nav {
+    display: flex;
+    gap: 6px;
+    margin: 12px 0 18px;
+    border-bottom: 2px solid var(--red-line);
+    padding-bottom: 10px;
+  }
+  .study-pill {
+    background: transparent;
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    color: var(--red);
+    font-family: 'Nunito', sans-serif;
+  }
+  .study-pill.active { background: var(--red); color: var(--bg); }
+
+  .study-view { display: none; }
+  .study-view.active { display: block; }
+
+  .add-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .add-form input {
+    flex: 1;
+    min-width: 140px;
+    padding: 10px 12px;
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  .add-form input::placeholder { color: var(--text-dim); }
+  .add-form button {
+    background: var(--red);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    white-space: nowrap;
+  }
+
+  .item-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+  .item-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--red-soft);
+    border: 1.5px solid var(--red);
+    border-radius: 8px;
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .item-list li .front { color: var(--red-bright); font-weight: 700; min-width: 0; }
+  .item-list li .sep { color: var(--text-dim); flex-shrink: 0; }
+  .item-list li .back { flex: 1; color: var(--text); min-width: 0; }
+  .item-list li .del {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+  .item-list li.empty {
+    justify-content: center;
+    font-style: italic;
+    color: var(--text-dim);
+    background: transparent;
+    border-style: dashed;
+  }
+
+  .big-btn {
+    width: 100%;
+    background: var(--red);
+    color: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 3px 3px 0 var(--red-dim);
+    transition: all 0.15s;
+  }
+  .big-btn:hover { transform: translate(-1px, -1px); }
+  .big-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--red-dim); }
+
+  .ghost-btn {
+    background: transparent;
+    color: var(--red);
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .ghost-btn:hover { background: var(--red-soft); }
+
+  .study-card {
+    perspective: 1000px;
+    width: 100%;
+    max-width: 480px;
+    height: 240px;
+    margin: 0 auto 12px;
+    cursor: pointer;
+  }
+  .study-card .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+  .study-card.flipped .card-inner { transform: rotateY(180deg); }
+  .study-card .card-front, .study-card .card-back {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2.5px solid var(--red);
+    border-radius: 14px;
+    background: var(--paper);
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-align: center;
+    color: var(--text);
+    backface-visibility: hidden;
+    box-shadow: 4px 4px 0 var(--red-dim);
+  }
+  .study-card .card-back {
+    transform: rotateY(180deg);
+    background: var(--red-soft);
+    color: var(--red-bright);
+  }
+  .card-hint {
+    text-align: center;
+    margin-top: 6px;
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+  }
+
+  .study-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .study-controls button {
+    background: var(--paper);
+    color: var(--text);
+    border: 2px solid var(--red);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .study-controls button:hover { background: var(--red-soft); }
+  .study-controls #flashCounter {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-soft);
+    padding: 0 8px;
+  }
+
+  .quiz-progress {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .quiz-question {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--text);
+    padding: 24px;
+    border: 2.5px solid var(--red);
+    border-radius: 12px;
+    background: var(--paper);
+    margin-bottom: 14px;
+    text-align: center;
+    box-shadow: 4px 4px 0 var(--red-dim);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #quizInput {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  #quizInput::placeholder { color: var(--text-dim); }
+  #quizSubmit {
+    width: 100%;
+    background: var(--red);
+    color: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  .quiz-feedback {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-align: center;
+    padding: 10px;
+    min-height: 40px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .quiz-feedback.correct { color: var(--red-bright); background: var(--red-soft); border: 1.5px solid var(--red); }
+  .quiz-feedback.wrong { color: var(--text); background: rgba(255, 42, 77, 0.04); border: 1.5px dashed var(--red); }
+
+  #quizResults { text-align: center; padding: 12px 0; }
+  #quizResults h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    color: var(--red-bright);
+    margin-bottom: 12px;
+  }
+  .quiz-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .quiz-floppa {
+    font-family: 'Caveat', cursive;
+    font-size: 1.4rem;
+    color: var(--red-bright);
+    margin-bottom: 16px;
+  }
+  #quizRestart {
+    background: var(--red);
+    color: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    margin-right: 8px;
+  }
+
+  .floppa-tab .stats-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 700px) { .floppa-tab .stats-row { grid-template-columns: 1fr; } }
+
+  .stat-box {
+    border: 2px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--paper);
+  }
+  .stat-box .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-soft);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .stat-box .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--red-bright);
+  }
+
+  .hunger-bar-wrap {
+    height: 28px;
+    background: var(--bg);
+    border: 2px solid var(--red);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .hunger-bar {
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(90deg, var(--red-dim), var(--red), var(--red-bright));
+    transition: width 0.4s cubic-bezier(.4,1.4,.6,1);
+    box-shadow: inset 0 -8px 12px rgba(0,0,0,0.25);
+  }
+  .hunger-bar-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: white;
+    text-shadow: 0 0 4px var(--bg), 0 0 4px var(--bg);
+    pointer-events: none;
+  }
+
+  .floppa-yard {
+    position: relative;
+    height: 280px;
+    background: linear-gradient(to bottom, transparent 0%, transparent 65%, rgba(255,42,77,0.04) 65%, rgba(255,42,77,0.04) 100%);
+    border: 2px solid var(--red);
+    border-radius: 12px;
+    margin-top: 18px;
+    overflow: hidden;
+  }
+  .ground-line {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 30px;
+    height: 2px;
+    background: var(--red);
+    opacity: 0.4;
+  }
+  .yard-label {
+    position: absolute;
+    top: 10px; left: 14px;
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    color: var(--text-soft);
+    z-index: 2;
+  }
+  .yard-status {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+
+  .floppa-pet {
+    position: absolute;
+    bottom: 30px;
+    width: 120px;
+    height: 100px;
+    transition: left 0.05s linear;
+    cursor: pointer;
+  }
+  .floppa-pet img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7));
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  .floppa-pet.walking img { animation: bob 0.5s infinite ease-in-out; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  .floppa-pet.facing-left img { transform: scaleX(-1); }
+  .floppa-pet.facing-left.walking img { animation: bobLeft 0.5s infinite ease-in-out; }
+  @keyframes bobLeft {
+    0%, 100% { transform: scaleX(-1) translateY(0); }
+    50% { transform: scaleX(-1) translateY(-3px); }
+  }
+
+  .floppa-pet.napping img {
+    transform: rotate(12deg) scale(0.85);
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.7)) brightness(0.75);
+  }
+  .floppa-pet.eating img { animation: nibble 0.25s infinite; }
+  @keyframes nibble {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-2px) rotate(1deg); }
+  }
+
+  .zzz {
+    position: absolute;
+    top: -12px; right: -8px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 900;
+    color: var(--red-bright);
+    font-size: 1.4rem;
+    animation: floatZ 2s infinite;
+    pointer-events: none;
+    opacity: 0;
+    text-shadow: 0 0 8px var(--bg);
+  }
+  .floppa-pet.napping .zzz { opacity: 1; }
+  @keyframes floatZ {
+    0% { transform: translate(0, 0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translate(10px, -20px); opacity: 0; }
+  }
+
+  .chicken {
+    position: absolute;
+    bottom: 6px;
+    right: 8px;
+    width: 22px; height: 18px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .floppa-pet.eating .chicken { opacity: 1; animation: chickenJiggle 0.3s infinite; }
+  .chicken .meat {
+    position: absolute;
+    bottom: 4px; left: 4px;
+    width: 14px; height: 10px;
+    background: var(--red);
+    border-radius: 40% 50% 30% 50%;
+    border: 1.5px solid var(--red-bright);
+  }
+  .chicken .bone {
+    position: absolute;
+    bottom: 0; left: 2px;
+    width: 18px; height: 4px;
+    background: var(--text-soft);
+    border-radius: 50%;
+  }
+  @keyframes chickenJiggle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-1px) rotate(3deg); }
+  }
+
+  .heart-pop {
+    position: absolute;
+    color: var(--red-bright);
+    font-size: 1.8rem;
+    pointer-events: none;
+    animation: heartFloat 0.9s ease-out forwards;
+    z-index: 5;
+    text-shadow: 0 0 6px var(--bg);
+  }
+  @keyframes heartFloat {
+    0% { opacity: 0; transform: translateY(0) scale(0.5); }
+    30% { opacity: 1; transform: translateY(-10px) scale(1.3); }
+    100% { opacity: 0; transform: translateY(-50px) scale(1); }
+  }
+
+  .floppa-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .control-btn {
+    flex: 1;
+    min-width: 130px;
+    background: var(--red);
+    color: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    box-shadow: 3px 3px 0 var(--red-dim);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .control-btn:hover { transform: translate(-1px, -1px); }
+  .control-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--red-dim); }
+  .control-btn.ghost { background: transparent; color: var(--red); }
+
+  .floppa-log {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    background: var(--bg);
+    border: 1.5px dashed var(--red-line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    max-height: 90px;
+    overflow-y: auto;
+  }
+  .floppa-log .line { margin-bottom: 2px; }
+  .floppa-log .line:first-child { color: var(--red-bright); }
+
+  .about-content { max-width: 720px; margin: 0 auto; }
+  .about-content p {
+    margin-bottom: 14px;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  .about-content .big-line {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--red-bright);
+    margin: 22px 0;
+    border-left: 4px solid var(--red);
+    padding-left: 16px;
+  }
+  .glungus-link {
+    color: var(--red-bright);
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    font-weight: 700;
+  }
+  .glungus-link:hover { color: var(--red); }
+
+  footer {
+    margin-top: 50px;
+    text-align: center;
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    color: var(--text-soft);
+  }
+  footer .heart { color: var(--red-bright); }
+  footer a { color: var(--red-bright); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  .paw {
+    position: fixed;
+    color: var(--red);
+    font-size: 1.5rem;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* LOGIN OVERLAY */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--bg);
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--red-line) 31px, var(--red-line) 32px),
+      radial-gradient(circle at 50% 30%, rgba(255, 42, 77, 0.08), transparent 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .login-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--paper);
+    border: 2.5px solid var(--red);
+    border-radius: 14px;
+    padding: 30px 28px;
+    box-shadow: 4px 4px 0 var(--red-dim);
+    text-align: center;
+    animation: pop 0.4s ease;
+  }
+  .login-floppa {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 14px;
+    border: 3px solid var(--red);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 3px 3px 0 var(--red-dim);
+    background: var(--paper);
+  }
+  .login-floppa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .login-card h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 1.8rem;
+    color: var(--red-bright);
+    margin-bottom: 4px;
+  }
+  .login-sub {
+    font-family: 'Caveat', cursive;
+    font-size: 1.15rem;
+    color: var(--text-soft);
+    margin-bottom: 20px;
+  }
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .login-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.15s;
+  }
+  .login-form input::placeholder { color: var(--text-dim); }
+  .login-form input:focus {
+    box-shadow: 3px 3px 0 var(--red-dim);
+    transform: translate(-1px, -1px);
+  }
+  .login-submit {
+    width: 100%;
+    padding: 12px;
+    background: var(--red);
+    color: var(--bg);
+    border: 2.5px solid var(--red);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--red-dim);
+    transition: all 0.15s;
+  }
+  .login-submit:hover { transform: translate(-1px, -1px); }
+  .login-submit:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--red-dim); }
+  .login-toggle {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    margin-top: 14px;
+  }
+  .login-toggle a {
+    color: var(--red-bright);
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-style: wavy;
+  }
+  .login-toggle a:hover { color: var(--red); }
+  .login-error {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--red-bright);
+    margin-top: 8px;
+    min-height: 18px;
+  }
+  .login-warning {
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-top: 18px;
+    border-top: 1.5px dashed var(--red-line);
+    padding-top: 12px;
+    line-height: 1.3;
+  }
+
+  /* user indicator */
+  .user-indicator {
+    position: fixed;
+    bottom: 12px;
+    left: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    background: var(--paper);
+    border: 1.5px solid var(--red);
+    border-radius: 999px;
+    padding: 5px 12px;
+    z-index: 100;
+    box-shadow: 2px 2px 0 var(--red-dim);
+  }
+  .user-indicator .uname { color: var(--red-bright); font-weight: 700; }
+  .user-indicator a {
+    color: var(--text-soft);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: 8px;
+  }
+  .user-indicator a:hover { color: var(--red-bright); }
+</style>
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <div class="login-floppa"><img id="loginFloppaImg" alt="Floppa" /></div>
+      <h2 id="loginTitle">Floppa AI</h2>
+      <p class="login-sub" id="loginSub">shades on. password required.</p>
+      <div class="login-form">
+        <input type="text" id="loginUsername" placeholder="username" autocomplete="off" maxlength="20" />
+        <input type="password" id="loginPassword" placeholder="password" maxlength="40" />
+      </div>
+      <button class="login-submit" id="loginSubmit">log in</button>
+      <div class="login-error" id="loginError"></div>
+      <div class="login-toggle" id="loginToggle">
+        no account? <a id="loginToggleLink">sign up</a>
+      </div>
+      <p class="login-warning">floppa note: this isn't real security — it just remembers your name. don't use a real password from another site.</p>
+    </div>
+  </div>
+
+  <div class="user-indicator" id="userIndicator" hidden>
+    logged in as <span class="uname" id="userIndicatorName"></span><a id="logoutLink">logout</a>
+  </div>
+
+  <span class="paw" style="top: 12%; right: 5%; transform: rotate(20deg);">🐾</span>
+  <span class="paw" style="bottom: 18%; right: 8%; transform: rotate(-15deg); font-size: 2rem;">🐾</span>
+  <span class="paw" style="top: 60%; left: 2%; transform: rotate(35deg);">🐾</span>
+
+  <div class="container">
+    <header>
+      <div class="floppa-mascot" id="mascot" title="floppa">
+        <img id="mascotImg" alt="Floppa" />
+      </div>
+      <div class="title-block">
+        <h1>Floppa <em>AI</em></h1>
+        <p class="credit">Thank you to the roblox group #1 FLOPPA for making the floppa. You a real one.</p>
+      </div>
+      <nav class="nav-pills">
+        <button class="pill active" data-tab="chat">chat</button>
+        <button class="pill" data-tab="planner">planner</button>
+        <button class="pill" data-tab="calc">calc</button>
+        <button class="pill" data-tab="study">study</button>
+        <button class="pill" data-tab="floppa">feed floppa</button>
+        <button class="pill" data-tab="about">about</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="tab-content active" id="tab-chat">
+        <div class="grid">
+          <div class="card">
+            <div class="chat-header">
+              <span class="status-dot"></span>
+              <h2>Floppa is online</h2>
+              <span class="sub">shades on. unbothered.</span>
+            </div>
+            <div class="messages" id="messages">
+              <div class="msg floppa">
+                <div class="who">Floppa</div>
+                yo. floppa here. very large cat. me want chicken. shades on. school stuff? say less, floppa got it. shoutout to my bro glungus, the og.
+              </div>
+            </div>
+            <div class="quick-prompts" id="quickPrompts">
+              <button data-prompt="help me focus">help me focus</button>
+              <button data-prompt="explain photosynthesis">explain photosynthesis</button>
+              <button data-prompt="give me a study tip">study tip</button>
+              <button data-prompt="i'm stressed about a test">i'm stressed</button>
+              <button data-prompt="tell me about glungus">about glungus</button>
+              <button data-prompt="tell me a joke">joke</button>
+            </div>
+            <div class="input-row">
+              <input id="chatInput" type="text" placeholder="ask floppa anything..." autocomplete="off" />
+              <button class="send-btn" id="sendBtn">send</button>
+            </div>
+          </div>
+
+          <aside class="sidebar">
+            <div class="panel">
+              <h3>📓 homework</h3>
+              <ul class="hw-list" id="hwList"></ul>
+              <div class="hw-add">
+                <input id="hwInput" type="text" placeholder="add an assignment..." />
+                <button id="hwAdd">+</button>
+              </div>
+            </div>
+            <div class="panel tip-box">
+              <h3>💡 floppa's tip</h3>
+              <p id="tipText">"explain it to your pet. if they get it, you get it."</p>
+              <button class="new-tip" id="newTip">↻ new tip</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-planner">
+        <div class="planner-grid">
+          <div class="panel">
+            <h3>📓 homework</h3>
+            <ul class="hw-list" id="hwListPlanner"></ul>
+            <div class="hw-add">
+              <input id="hwInputPlanner" type="text" placeholder="add an assignment..." />
+              <button id="hwAddPlanner">+</button>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>⏰ today's schedule</h3>
+            <div class="schedule">
+              <div class="period"><span class="time">8:15</span><span class="name">Math</span></div>
+              <div class="period"><span class="time">9:10</span><span class="name">English</span></div>
+              <div class="period"><span class="time">10:05</span><span class="name">Science</span></div>
+              <div class="period"><span class="time">11:00</span><span class="name">Lunch (floppa's favorite)</span></div>
+              <div class="period"><span class="time">11:45</span><span class="name">History</span></div>
+              <div class="period"><span class="time">12:40</span><span class="name">Art</span></div>
+              <div class="period"><span class="time">1:35</span><span class="name">P.E.</span></div>
+            </div>
+          </div>
+          <div class="panel full tip-box">
+            <h3>💡 floppa's tip of the moment</h3>
+            <p id="tipText2">"explain it to your pet. if they get it, you get it."</p>
+            <button class="new-tip" id="newTip2">↻ new tip</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-calc">
+        <div class="calc-wrap">
+          <div class="card">
+            <h2 style="margin-bottom: 16px;">🔢 floppa's calculator</h2>
+            <div class="calc-history" id="calcHistory">&nbsp;</div>
+            <div class="calc-display" id="calcDisplay">0</div>
+            <div class="calc-grid">
+              <button class="calc-btn clr" data-key="C">C</button>
+              <button class="calc-btn clr" data-key="±">±</button>
+              <button class="calc-btn clr" data-key="%">%</button>
+              <button class="calc-btn op" data-key="/">÷</button>
+
+              <button class="calc-btn" data-key="7">7</button>
+              <button class="calc-btn" data-key="8">8</button>
+              <button class="calc-btn" data-key="9">9</button>
+              <button class="calc-btn op" data-key="*">×</button>
+
+              <button class="calc-btn" data-key="4">4</button>
+              <button class="calc-btn" data-key="5">5</button>
+              <button class="calc-btn" data-key="6">6</button>
+              <button class="calc-btn op" data-key="-">−</button>
+
+              <button class="calc-btn" data-key="1">1</button>
+              <button class="calc-btn" data-key="2">2</button>
+              <button class="calc-btn" data-key="3">3</button>
+              <button class="calc-btn op" data-key="+">+</button>
+
+              <button class="calc-btn wide" data-key="0">0</button>
+              <button class="calc-btn" data-key=".">.</button>
+              <button class="calc-btn eq" data-key="=">=</button>
+            </div>
+            <p class="calc-floppa-line">floppa says: math is just numbers being friends</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-study">
+        <div class="card">
+          <h2>📚 study lab</h2>
+          <p class="subtitle">make flashcards. build your own quiz. floppa will judge.</p>
+
+          <nav class="study-nav">
+            <button class="study-pill active" data-study="flash">flashcards</button>
+            <button class="study-pill" data-study="quiz">quiz builder</button>
+          </nav>
+
+          <div class="study-view active" id="study-flash">
+            <div id="flashNormal">
+              <div class="add-form">
+                <input id="flashFront" placeholder="front (e.g. mitochondria)" />
+                <input id="flashBack" placeholder="back (e.g. powerhouse of the cell)" />
+                <button id="flashAdd">+ add card</button>
+              </div>
+              <ul class="item-list" id="flashList"></ul>
+              <button class="big-btn" id="flashStart">▶ start study session</button>
+            </div>
+            <div id="flashStudy" hidden>
+              <div class="study-card" id="flashCard">
+                <div class="card-inner">
+                  <div class="card-front" id="flashCardFront"></div>
+                  <div class="card-back" id="flashCardBack"></div>
+                </div>
+              </div>
+              <div class="card-hint">tap card to flip</div>
+              <div class="study-controls">
+                <button id="flashPrev">← prev</button>
+                <span id="flashCounter">1 / 1</span>
+                <button id="flashNext">next →</button>
+                <button class="ghost-btn" id="flashShuffle">🔀 shuffle</button>
+                <button class="ghost-btn" id="flashExit">exit</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="study-view" id="study-quiz">
+            <div id="quizNormal">
+              <div class="add-form">
+                <input id="quizQ" placeholder="question (e.g. capital of france?)" />
+                <input id="quizA" placeholder="answer (separate alts with commas)" />
+                <button id="quizAdd">+ add</button>
+              </div>
+              <ul class="item-list" id="quizList"></ul>
+              <button class="big-btn" id="quizStart">▶ start quiz</button>
+            </div>
+            <div id="quizPlay" hidden>
+              <div class="quiz-progress" id="quizProgress">question 1 of 1</div>
+              <div class="quiz-question" id="quizQuestion"></div>
+              <input id="quizInput" placeholder="type your answer..." autocomplete="off" />
+              <button id="quizSubmit">submit answer</button>
+              <div class="quiz-feedback" id="quizFeedback"></div>
+              <div style="text-align: center;">
+                <button class="ghost-btn" id="quizExit">exit quiz</button>
+              </div>
+            </div>
+            <div id="quizResults" hidden>
+              <h3>quiz complete</h3>
+              <div class="quiz-score" id="quizScore">0 / 0</div>
+              <div class="quiz-floppa" id="quizFloppa"></div>
+              <button id="quizRestart">try again</button>
+              <button class="ghost-btn" id="quizBackToBuilder">back to builder</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content floppa-tab" id="tab-floppa">
+        <div class="card">
+          <h2 style="margin-bottom: 8px;">🍗 feed floppa</h2>
+          <p class="subtitle">tap the bar to fill it up. or hit the button. every 3 chat messages auto-feeds him chicken too.</p>
+
+          <div class="stats-row">
+            <div class="stat-box">
+              <div class="label">hunger bar (tap to fill)</div>
+              <div class="hunger-bar-wrap" id="hungerWrap">
+                <div class="hunger-bar" id="hungerBar"></div>
+                <div class="hunger-bar-label" id="hungerLabel">50%</div>
+              </div>
+            </div>
+            <div class="stat-box">
+              <div class="label">🍗 chicken eaten</div>
+              <div class="value" id="chickenCount">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="label">❤ pets given</div>
+              <div class="value" id="petCount">0</div>
+            </div>
+          </div>
+
+          <div class="floppa-yard" id="yard">
+            <span class="yard-label">floppa's yard</span>
+            <span class="yard-status" id="yardStatus">walking</span>
+            <div class="ground-line"></div>
+
+            <div class="floppa-pet walking" id="floppaPet" style="left: 50%;">
+              <img id="floppaPetImg" alt="Floppa" />
+              <div class="zzz">Zz</div>
+              <div class="chicken"><div class="meat"></div><div class="bone"></div></div>
+            </div>
+          </div>
+
+          <div class="floppa-controls">
+            <button class="control-btn" id="feedBtn">🍗 feed chicken</button>
+            <button class="control-btn ghost" id="petBtn">❤ pet floppa</button>
+          </div>
+
+          <div class="floppa-log" id="floppaLog">
+            <div class="line">> floppa is in the yard. doing floppa things.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-about">
+        <div class="about-content">
+          <div class="card">
+            <h2 style="margin-bottom: 16px;">about floppa</h2>
+            <p>floppa is an ai sidekick for school. shades on. business handled. crafted at <a href="https://glungus-ai--redbhakta101.replit.app/" target="_blank" class="glungus-link">glungus ai labs</a> by a 12 year old engineer who builds ai's out of cat memes. respect.</p>
+            <p>floppa handles homework, schedules, math, flashcards, custom quizzes, and the occasional existential crisis. payment accepted in chicken.</p>
+            <div class="big-line">"glungus is my dawg. me and bro glungus run the block. the math homework block, but still." — floppa</div>
+            <p>this is the floppa edition. for the original sidekick experience, hit up <a href="https://glungus-ai--redbhakta101.replit.app/" target="_blank" class="glungus-link">glungus ai</a>, the og.</p>
+            <p style="font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--text-soft);">— powered by glungus ai labs · floppa is a very large cat</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      made with <span class="heart">♥</span> at <a href="https://glungus-ai--redbhakta101.replit.app/" target="_blank">glungus ai labs</a> · floppa &amp; glungus, bros for life
+    </footer>
+  </div>
+
+<script>
+const FLOPPA_IMG_DATA = 'data:image/jpeg;base64,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';
+document.getElementById('mascotImg').src = FLOPPA_IMG_DATA;
+document.getElementById('floppaPetImg').src = FLOPPA_IMG_DATA;
+document.getElementById('loginFloppaImg').src = FLOPPA_IMG_DATA;
+
+/* ============ LOGIN SYSTEM ============ */
+const ACCOUNT_KEY = 'floppaAccount_v1';
+const loginOverlay = document.getElementById('loginOverlay');
+const loginUsernameEl = document.getElementById('loginUsername');
+const loginPasswordEl = document.getElementById('loginPassword');
+const loginSubmitBtn = document.getElementById('loginSubmit');
+const loginErrorEl = document.getElementById('loginError');
+const loginTitleEl = document.getElementById('loginTitle');
+const loginSubEl = document.getElementById('loginSub');
+const loginToggleEl = document.getElementById('loginToggle');
+const userIndicatorEl = document.getElementById('userIndicator');
+const userIndicatorNameEl = document.getElementById('userIndicatorName');
+
+let loginMode = 'login';
+let currentUser = null;
+
+function getAccount() {
+  try { return JSON.parse(localStorage.getItem(ACCOUNT_KEY)); } catch (e) { return null; }
+}
+function saveAccount(username, password) {
+  localStorage.setItem(ACCOUNT_KEY, JSON.stringify({ username, password }));
+}
+function clearAccount() {
+  localStorage.removeItem(ACCOUNT_KEY);
+}
+
+function bindToggleLink() {
+  const link = document.getElementById('loginToggleLink');
+  if (link) link.addEventListener('click', toggleLoginMode);
+}
+
+function setLoginMode(mode) {
+  loginMode = mode;
+  loginErrorEl.textContent = '';
+  if (mode === 'signup') {
+    loginTitleEl.textContent = 'sign up';
+    loginSubEl.textContent = 'pick a username. floppa will remember you.';
+    loginSubmitBtn.textContent = 'create account';
+    loginToggleEl.innerHTML = 'already have one? <a id="loginToggleLink">log in</a>';
+  } else {
+    loginTitleEl.textContent = 'Floppa AI';
+    loginSubEl.textContent = 'shades on. password required.';
+    loginSubmitBtn.textContent = 'log in';
+    loginToggleEl.innerHTML = 'no account? <a id="loginToggleLink">sign up</a>';
+  }
+  bindToggleLink();
+}
+function toggleLoginMode() {
+  setLoginMode(loginMode === 'login' ? 'signup' : 'login');
+  if (loginMode === 'signup') loginUsernameEl.focus();
+  else loginPasswordEl.focus();
+}
+
+function hideLogin() {
+  loginOverlay.classList.add('hidden');
+  setTimeout(() => { loginOverlay.style.display = 'none'; }, 500);
+  userIndicatorEl.hidden = false;
+  userIndicatorNameEl.textContent = currentUser;
+  personalizeWelcome();
+}
+
+function showLogin() {
+  loginOverlay.style.display = 'flex';
+  loginOverlay.classList.remove('hidden');
+  userIndicatorEl.hidden = true;
+  loginUsernameEl.value = '';
+  loginPasswordEl.value = '';
+  loginErrorEl.textContent = '';
+  const acct = getAccount();
+  if (acct) {
+    loginUsernameEl.value = acct.username;
+    setLoginMode('login');
+    setTimeout(() => loginPasswordEl.focus(), 100);
+  } else {
+    setLoginMode('signup');
+    setTimeout(() => loginUsernameEl.focus(), 100);
+  }
+}
+
+function attemptLogin() {
+  const u = loginUsernameEl.value.trim();
+  const p = loginPasswordEl.value;
+  if (!u || !p) {
+    loginErrorEl.textContent = 'floppa needs both fields. fill them in.';
+    return;
+  }
+  if (u.length < 2) {
+    loginErrorEl.textContent = 'username too short. at least 2 chars.';
+    return;
+  }
+  if (loginMode === 'signup') {
+    saveAccount(u, p);
+    currentUser = u;
+    hideLogin();
+  } else {
+    const acct = getAccount();
+    if (!acct) {
+      loginErrorEl.textContent = 'no account exists. switch to sign up.';
+      return;
+    }
+    if (acct.username.toLowerCase() !== u.toLowerCase()) {
+      loginErrorEl.textContent = "username doesn't match. floppa is skeptical.";
+      return;
+    }
+    if (acct.password !== p) {
+      loginErrorEl.textContent = 'wrong password. floppa shakes head.';
+      return;
+    }
+    currentUser = acct.username;
+    hideLogin();
+  }
+}
+
+function personalizeWelcome() {
+  const firstMsg = document.querySelector('#messages .msg.floppa');
+  if (firstMsg && !firstMsg.dataset.personalized && currentUser) {
+    const safeName = currentUser.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    firstMsg.innerHTML = `<div class="who">Floppa</div>yo ${safeName}. floppa here. very large cat. me want chicken. shades on. school stuff? say less, floppa got it. shoutout to my bro glungus, the og.`;
+    firstMsg.dataset.personalized = 'true';
+  }
+}
+
+loginSubmitBtn.addEventListener('click', attemptLogin);
+loginPasswordEl.addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+loginUsernameEl.addEventListener('keydown', e => { if (e.key === 'Enter') {
+  if (loginMode === 'signup') attemptLogin();
+  else loginPasswordEl.focus();
+}});
+document.getElementById('logoutLink').addEventListener('click', () => {
+  if (confirm('log out? your homework and floppa stay saved.')) {
+    currentUser = null;
+    showLogin();
+  }
+});
+
+// Init
+showLogin();
+
+
+const pills = document.querySelectorAll('.pill');
+const tabs = document.querySelectorAll('.tab-content');
+pills.forEach(p => p.addEventListener('click', () => {
+  pills.forEach(x => x.classList.remove('active'));
+  tabs.forEach(x => x.classList.remove('active'));
+  p.classList.add('active');
+  document.getElementById('tab-' + p.dataset.tab).classList.add('active');
+}));
+
+const floppaResponses = {
+  glungus: [
+    "glungus is my dawg. always has been. always will be. respect.",
+    "shoutout to my bro glungus. real recognize real. floppa & glungus, the duo.",
+    "glungus? legend. me and bro glungus go way back. ride or die.",
+    "homeboy glungus carries different energy. floppa carries the chicken. balanced."
+  ],
+  focus: [
+    "focus is easy. you put the phone down. you do the thing. that's it.",
+    "wanna focus? close the tabs. lock in. floppa stares at one wall for hours. unmatched discipline.",
+    "tip: 25 minutes work, 5 minute break. boom. that's the tweet.",
+    "bro glungus calls it the glungus method. floppa just calls it 'doing the thing.' same diff."
+  ],
+  photosynthesis: [
+    "plants eat sunlight. that's the whole thing. light + water + co2 = sugar + oxygen. easy.",
+    "photo = light. synthesis = put together. green bois making food from a star. respect to plants."
+  ],
+  stress: [
+    "stress? floppa doesn't know her. breathe in, breathe out. one question at a time.",
+    "test is just paper. paper is not your boss. you've handled harder. trust.",
+    "even if you bomb it, life keeps going. but you won't bomb it. floppa believes. bro glungus too."
+  ],
+  joke: [
+    "why was the math book sad? too many problems. classic. floppa stays winning.",
+    "what's a cat's favorite subject? hisss-tory. you're welcome.",
+    "would tell a chemistry joke but floppa's afraid you wouldn't react. *removes shades*"
+  ],
+  tip: [
+    "study tip: explain it to a stuffed animal. if it gets it, you got it.",
+    "write notes by hand. brain remembers more. it's science.",
+    "25 on, 5 off. boring name, works anyway. bro glungus calls it the glungus method."
+  ],
+  hello: [
+    "what up. floppa's here. shades on. let's work.",
+    "hey. *adjusts shades* floppa is listening."
+  ],
+  thanks: [
+    "yeah. don't mention it. floppa's just doing floppa things.",
+    "you got it. floppa always pulls through."
+  ],
+  bye: [
+    "later. tell bro glungus floppa says what up.",
+    "peace. go handle business."
+  ],
+  chicken: [
+    "chicken. say less. me want chicken. always.",
+    "you said the magic word. floppa is listening. closely.",
+    "chicken is the answer. to what? everything."
+  ],
+  default: [
+    "hmm. ask it differently maybe? floppa is cool but not psychic.",
+    "floppa needs more info. what's the actual subject?",
+    "good question. start with what you know, build from there. that's the move.",
+    "floppa is not your teacher (floppa is a cat with shades). but: try google + ask your teacher. both. always.",
+    "break it into smaller parts. anything is doable when it's small enough."
+  ]
+};
+
+function getReply(input) {
+  const text = input.toLowerCase();
+  if (/glungus|bro|homeboy|dawg/.test(text)) return rand(floppaResponses.glungus);
+  if (/chicken/.test(text)) return rand(floppaResponses.chicken);
+  if (/\b(hi|hey|hello|sup|yo|what up)\b/.test(text)) return rand(floppaResponses.hello);
+  if (/\b(thanks|thank you|ty|thx)\b/.test(text)) return rand(floppaResponses.thanks);
+  if (/\b(bye|goodbye|cya|later)\b/.test(text)) return rand(floppaResponses.bye);
+  if (/focus|concentrat|distract/.test(text)) return rand(floppaResponses.focus);
+  if (/photosynthesis|plant|chloroplast/.test(text)) return rand(floppaResponses.photosynthesis);
+  if (/stress|anxious|nervous|worried|scared|test/.test(text)) return rand(floppaResponses.stress);
+  if (/joke|funny|laugh/.test(text)) return rand(floppaResponses.joke);
+  if (/tip|advice|how do i study/.test(text)) return rand(floppaResponses.tip);
+  return rand(floppaResponses.default);
+}
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+const messagesEl = document.getElementById('messages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+let userMessageCount = 0;
+
+function addMsg(text, who) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.innerHTML = `<div class="who">${who === 'floppa' ? 'Floppa' : 'You'}</div>${text}`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function addTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg floppa';
+  div.id = 'typing';
+  div.innerHTML = `<div class="who">Floppa</div><div class="typing"><span></span><span></span><span></span></div>`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+function send() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addMsg(text, 'user');
+  chatInput.value = '';
+  userMessageCount++;
+  if (userMessageCount % 3 === 0) {
+    setTimeout(autoFeedChicken, 400);
+  }
+  addTyping();
+  setTimeout(() => {
+    removeTyping();
+    addMsg(getReply(text), 'floppa');
+  }, 700 + Math.random() * 600);
+}
+sendBtn.addEventListener('click', send);
+chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+document.getElementById('quickPrompts').addEventListener('click', e => {
+  if (e.target.tagName === 'BUTTON') {
+    chatInput.value = e.target.dataset.prompt;
+    send();
+  }
+});
+
+let homework = JSON.parse(localStorage.getItem('floppaHw') || 'null') || [
+  { text: 'finish math packet', subj: 'math', done: false },
+  { text: 'read chapter 4', subj: 'english', done: false },
+  { text: 'volcano diagram', subj: 'science', done: true }
+];
+function saveHw() { localStorage.setItem('floppaHw', JSON.stringify(homework)); }
+function detectSubject(text) {
+  const t = text.toLowerCase();
+  if (/math|algebra|geometry|equation|number/.test(t)) return 'math';
+  if (/read|essay|book|chapter|english|writing/.test(t)) return 'english';
+  if (/science|bio|chem|physics|lab|experiment/.test(t)) return 'science';
+  if (/history|war|ancient/.test(t)) return 'history';
+  if (/art|draw|paint/.test(t)) return 'art';
+  if (/p\.?e\.?|gym|exercise/.test(t)) return 'p.e.';
+  return 'todo';
+}
+function renderHwInto(listEl) {
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  homework.forEach((item, i) => {
+    const li = document.createElement('li');
+    if (item.done) li.classList.add('done');
+    li.innerHTML = `<span class="check"></span><span class="text"></span><span class="subj"></span><button class="del" title="delete">×</button>`;
+    li.querySelector('.text').textContent = item.text;
+    li.querySelector('.subj').textContent = item.subj;
+    li.addEventListener('click', e => {
+      if (e.target.classList.contains('del')) return;
+      homework[i].done = !homework[i].done;
+      saveHw(); renderAllHw();
+    });
+    li.querySelector('.del').addEventListener('click', () => {
+      homework.splice(i, 1);
+      saveHw(); renderAllHw();
+    });
+    listEl.appendChild(li);
+  });
+}
+function renderAllHw() {
+  renderHwInto(document.getElementById('hwList'));
+  renderHwInto(document.getElementById('hwListPlanner'));
+}
+function bindHwAdd(inputId, btnId) {
+  const inp = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  function add() {
+    const text = inp.value.trim();
+    if (!text) return;
+    homework.push({ text, subj: detectSubject(text), done: false });
+    inp.value = '';
+    saveHw(); renderAllHw();
+  }
+  btn.addEventListener('click', add);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+}
+bindHwAdd('hwInput', 'hwAdd');
+bindHwAdd('hwInputPlanner', 'hwAddPlanner');
+renderAllHw();
+
+const tips = [
+  '"explain it to your pet. if they get it, you get it."',
+  '"sleep is a study tool. brain files things while you snooze. floppa\'s a pro."',
+  '"flashcards. boring. they work. that\'s the deal."',
+  '"hardest homework first. brain is freshest. cruise the rest."',
+  '"break big assignments into tiny pieces. one piece a day. you\'re done before you know it."',
+  '"snack. water. break. repeat. studying isn\'t a sprint."',
+  '"if stuck, walk away 10 minutes. brain solves it in the background. trust the process."',
+  '"explain stuff out loud. even to nobody. especially to nobody."',
+  '"highlighting is fake studying. writing your own summary is real studying."',
+  '"night before a test: review, don\'t cram. and SLEEP. non-negotiable."',
+  '"bro glungus says: study where you test. brain remembers location. weird but real."'
+];
+let lastTip = -1;
+function newTip() {
+  let i;
+  do { i = Math.floor(Math.random() * tips.length); } while (i === lastTip && tips.length > 1);
+  lastTip = i;
+  ['tipText', 'tipText2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = tips[i];
+      el.style.transition = 'opacity 0.3s';
+      el.style.opacity = '1';
+    }, 200);
+  });
+}
+document.getElementById('newTip').addEventListener('click', newTip);
+document.getElementById('newTip2').addEventListener('click', newTip);
+
+const calc = { display: '0', prev: null, op: null, resetNext: false, history: '' };
+const calcDisplay = document.getElementById('calcDisplay');
+const calcHistory = document.getElementById('calcHistory');
+function updateCalc() {
+  let d = calc.display;
+  if (d.length > 12 && !isNaN(parseFloat(d))) d = parseFloat(d).toExponential(6);
+  calcDisplay.textContent = d;
+  calcHistory.innerHTML = calc.history || '&nbsp;';
+}
+function calcPress(key) {
+  if (/^[0-9]$/.test(key)) {
+    if (calc.resetNext || calc.display === '0') { calc.display = key; calc.resetNext = false; }
+    else calc.display += key;
+  } else if (key === '.') {
+    if (calc.resetNext) { calc.display = '0.'; calc.resetNext = false; }
+    else if (!calc.display.includes('.')) calc.display += '.';
+  } else if (key === 'C') {
+    calc.display = '0'; calc.prev = null; calc.op = null; calc.resetNext = false; calc.history = '';
+  } else if (key === '±') {
+    if (calc.display !== '0') calc.display = calc.display.startsWith('-') ? calc.display.slice(1) : '-' + calc.display;
+  } else if (key === '%') {
+    calc.display = String(parseFloat(calc.display) / 100);
+  } else if (['+', '-', '*', '/'].includes(key)) {
+    if (calc.prev !== null && calc.op && !calc.resetNext) doEquals();
+    calc.prev = parseFloat(calc.display);
+    calc.op = key;
+    calc.resetNext = true;
+    const symbols = { '+':'+', '-':'−', '*':'×', '/':'÷' };
+    calc.history = `${calc.prev} ${symbols[key]}`;
+  } else if (key === '=') {
+    doEquals();
+  }
+  updateCalc();
+}
+function doEquals() {
+  if (calc.prev === null || !calc.op) return;
+  const cur = parseFloat(calc.display);
+  let result;
+  switch (calc.op) {
+    case '+': result = calc.prev + cur; break;
+    case '-': result = calc.prev - cur; break;
+    case '*': result = calc.prev * cur; break;
+    case '/': result = cur === 0 ? NaN : calc.prev / cur; break;
+  }
+  if (isNaN(result)) {
+    calc.display = 'no chicken';
+    calc.history = 'floppa says: no /0';
+  } else {
+    const symbols = { '+':'+', '-':'−', '*':'×', '/':'÷' };
+    calc.history = `${calc.prev} ${symbols[calc.op]} ${cur} =`;
+    calc.display = String(Math.round(result * 1e10) / 1e10);
+  }
+  calc.prev = null;
+  calc.op = null;
+  calc.resetNext = true;
+}
+document.querySelectorAll('.calc-btn').forEach(b => {
+  b.addEventListener('click', () => calcPress(b.dataset.key));
+});
+document.addEventListener('keydown', e => {
+  const calcActive = document.getElementById('tab-calc').classList.contains('active');
+  if (!calcActive) return;
+  if (e.target.tagName === 'INPUT') return;
+  const k = e.key;
+  if (/^[0-9.]$/.test(k)) calcPress(k);
+  else if (['+', '-', '*', '/'].includes(k)) calcPress(k);
+  else if (k === 'Enter' || k === '=') { e.preventDefault(); calcPress('='); }
+  else if (k === 'Backspace' || k === 'Escape') calcPress('C');
+});
+
+document.querySelectorAll('.study-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.study-pill').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.study-view').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    document.getElementById('study-' + p.dataset.study).classList.add('active');
+  });
+});
+
+let flashcards = JSON.parse(localStorage.getItem('floppaFlashcards') || 'null') || [
+  { front: 'mitochondria', back: 'powerhouse of the cell' },
+  { front: 'photosynthesis', back: 'plants making food from sunlight' },
+  { front: 'denominator', back: 'the bottom number of a fraction' }
+];
+function saveFlash() { localStorage.setItem('floppaFlashcards', JSON.stringify(flashcards)); }
+
+function renderFlashList() {
+  const list = document.getElementById('flashList');
+  list.innerHTML = '';
+  if (flashcards.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'empty';
+    li.textContent = 'no cards yet. add some above.';
+    list.appendChild(li);
+    return;
+  }
+  flashcards.forEach((c, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="front"></span><span class="sep">→</span><span class="back"></span><button class="del">×</button>`;
+    li.querySelector('.front').textContent = c.front;
+    li.querySelector('.back').textContent = c.back;
+    li.querySelector('.del').addEventListener('click', () => {
+      flashcards.splice(i, 1);
+      saveFlash(); renderFlashList();
+    });
+    list.appendChild(li);
+  });
+}
+renderFlashList();
+
+document.getElementById('flashAdd').addEventListener('click', () => {
+  const front = document.getElementById('flashFront').value.trim();
+  const back = document.getElementById('flashBack').value.trim();
+  if (!front || !back) return;
+  flashcards.push({ front, back });
+  document.getElementById('flashFront').value = '';
+  document.getElementById('flashBack').value = '';
+  document.getElementById('flashFront').focus();
+  saveFlash();
+  renderFlashList();
+});
+['flashFront', 'flashBack'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('flashAdd').click();
+  });
+});
+
+let flashDeck = [];
+let flashIdx = 0;
+
+document.getElementById('flashStart').addEventListener('click', () => {
+  if (flashcards.length === 0) {
+    alert('add some cards first.');
+    return;
+  }
+  flashDeck = [...flashcards];
+  flashIdx = 0;
+  document.getElementById('flashNormal').hidden = true;
+  document.getElementById('flashStudy').hidden = false;
+  showFlashCard();
+});
+
+function showFlashCard() {
+  const card = flashDeck[flashIdx];
+  document.getElementById('flashCardFront').textContent = card.front;
+  document.getElementById('flashCardBack').textContent = card.back;
+  document.getElementById('flashCounter').textContent = `${flashIdx + 1} / ${flashDeck.length}`;
+  document.getElementById('flashCard').classList.remove('flipped');
+}
+
+document.getElementById('flashCard').addEventListener('click', () => {
+  document.getElementById('flashCard').classList.toggle('flipped');
+});
+document.getElementById('flashPrev').addEventListener('click', () => {
+  flashIdx = (flashIdx - 1 + flashDeck.length) % flashDeck.length;
+  showFlashCard();
+});
+document.getElementById('flashNext').addEventListener('click', () => {
+  flashIdx = (flashIdx + 1) % flashDeck.length;
+  showFlashCard();
+});
+document.getElementById('flashShuffle').addEventListener('click', () => {
+  flashDeck.sort(() => Math.random() - 0.5);
+  flashIdx = 0;
+  showFlashCard();
+});
+document.getElementById('flashExit').addEventListener('click', () => {
+  document.getElementById('flashStudy').hidden = true;
+  document.getElementById('flashNormal').hidden = false;
+});
+
+let questions = JSON.parse(localStorage.getItem('floppaQuestions') || 'null') || [
+  { q: "what's 7 × 8?", a: '56' },
+  { q: 'capital of france?', a: 'paris' },
+  { q: 'h2o is the formula for?', a: 'water' }
+];
+function saveQuestions() { localStorage.setItem('floppaQuestions', JSON.stringify(questions)); }
+
+function renderQuizList() {
+  const list = document.getElementById('quizList');
+  list.innerHTML = '';
+  if (questions.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'empty';
+    li.textContent = 'no questions yet. add some above.';
+    list.appendChild(li);
+    return;
+  }
+  questions.forEach((qq, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="front"></span><span class="sep">·</span><span class="back"></span><button class="del">×</button>`;
+    li.querySelector('.front').textContent = qq.q;
+    li.querySelector('.back').textContent = qq.a;
+    li.querySelector('.del').addEventListener('click', () => {
+      questions.splice(i, 1);
+      saveQuestions(); renderQuizList();
+    });
+    list.appendChild(li);
+  });
+}
+renderQuizList();
+
+document.getElementById('quizAdd').addEventListener('click', () => {
+  const q = document.getElementById('quizQ').value.trim();
+  const a = document.getElementById('quizA').value.trim();
+  if (!q || !a) return;
+  questions.push({ q, a });
+  document.getElementById('quizQ').value = '';
+  document.getElementById('quizA').value = '';
+  document.getElementById('quizQ').focus();
+  saveQuestions();
+  renderQuizList();
+});
+['quizQ', 'quizA'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('quizAdd').click();
+  });
+});
+
+let quizState = null;
+
+function startQuiz() {
+  if (questions.length === 0) {
+    alert('add some questions first.');
+    return;
+  }
+  const shuffled = [...questions].sort(() => Math.random() - 0.5);
+  quizState = { questions: shuffled, idx: 0, correct: 0, total: shuffled.length, locked: false };
+  document.getElementById('quizNormal').hidden = true;
+  document.getElementById('quizPlay').hidden = false;
+  document.getElementById('quizResults').hidden = true;
+  showQuizQuestion();
+}
+document.getElementById('quizStart').addEventListener('click', startQuiz);
+
+function showQuizQuestion() {
+  const q = quizState.questions[quizState.idx];
+  document.getElementById('quizProgress').textContent = `question ${quizState.idx + 1} of ${quizState.total}`;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizInput').value = '';
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('quizFeedback').className = 'quiz-feedback';
+  quizState.locked = false;
+  setTimeout(() => document.getElementById('quizInput').focus(), 50);
+}
+
+function checkAnswer(userInput, correct) {
+  const norm = s => s.toLowerCase().trim().replace(/[.,!?;:'"]/g, '');
+  const userNorm = norm(userInput);
+  const alts = correct.split(',').map(a => norm(a)).filter(Boolean);
+  return alts.includes(userNorm);
+}
+
+function submitQuizAnswer() {
+  if (quizState.locked) return;
+  const input = document.getElementById('quizInput');
+  const userAnswer = input.value.trim();
+  if (!userAnswer) return;
+  quizState.locked = true;
+  const q = quizState.questions[quizState.idx];
+  const isCorrect = checkAnswer(userAnswer, q.a);
+  const feedback = document.getElementById('quizFeedback');
+  if (isCorrect) {
+    quizState.correct += 1;
+    feedback.textContent = '✓ correct. floppa nods.';
+    feedback.className = 'quiz-feedback correct';
+  } else {
+    feedback.textContent = `✗ correct answer: ${q.a}`;
+    feedback.className = 'quiz-feedback wrong';
+  }
+  setTimeout(() => {
+    quizState.idx += 1;
+    if (quizState.idx >= quizState.total) showQuizResults();
+    else showQuizQuestion();
+  }, 1500);
+}
+document.getElementById('quizSubmit').addEventListener('click', submitQuizAnswer);
+document.getElementById('quizInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitQuizAnswer();
+});
+
+function showQuizResults() {
+  document.getElementById('quizPlay').hidden = true;
+  document.getElementById('quizResults').hidden = false;
+  const pct = Math.round((quizState.correct / quizState.total) * 100);
+  document.getElementById('quizScore').textContent = `${quizState.correct} / ${quizState.total} · ${pct}%`;
+  let comment;
+  if (pct === 100) comment = "perfect. floppa is impressed (won't show it).";
+  else if (pct >= 80) comment = "solid. floppa nods. respectfully.";
+  else if (pct >= 60) comment = "decent. could be better. floppa believes.";
+  else if (pct >= 40) comment = "midpack. brush up. you got this.";
+  else comment = "tough round. shake it off. study and run it back.";
+  document.getElementById('quizFloppa').textContent = comment;
+}
+document.getElementById('quizRestart').addEventListener('click', startQuiz);
+document.getElementById('quizExit').addEventListener('click', () => {
+  document.getElementById('quizPlay').hidden = true;
+  document.getElementById('quizNormal').hidden = false;
+});
+document.getElementById('quizBackToBuilder').addEventListener('click', () => {
+  document.getElementById('quizResults').hidden = true;
+  document.getElementById('quizNormal').hidden = false;
+});
+
+const SAVE_KEY = 'floppaCare_v1';
+const saved = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+const floppa = saved || { hunger: 50, pets: 0, chicken: 0 };
+
+const floppaPet = document.getElementById('floppaPet');
+const yard = document.getElementById('yard');
+const yardStatus = document.getElementById('yardStatus');
+const hungerBar = document.getElementById('hungerBar');
+const hungerLabel = document.getElementById('hungerLabel');
+const hungerWrap = document.getElementById('hungerWrap');
+const chickenCountEl = document.getElementById('chickenCount');
+const petCountEl = document.getElementById('petCount');
+const logEl = document.getElementById('floppaLog');
+
+const move = {
+  x: 50,
+  dir: 1,
+  state: 'walking',
+  until: Date.now() + 4000
+};
+
+function saveFloppa() { localStorage.setItem(SAVE_KEY, JSON.stringify(floppa)); }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+function log(text) {
+  const line = document.createElement('div');
+  line.className = 'line';
+  line.textContent = '> ' + text;
+  logEl.insertBefore(line, logEl.firstChild);
+  while (logEl.children.length > 8) logEl.removeChild(logEl.lastChild);
+}
+
+function renderStats() {
+  hungerBar.style.width = floppa.hunger + '%';
+  hungerLabel.textContent = Math.round(floppa.hunger) + '%';
+  chickenCountEl.textContent = floppa.chicken;
+  petCountEl.textContent = floppa.pets;
+}
+
+function renderFloppa() {
+  floppaPet.style.left = move.x + '%';
+  floppaPet.classList.toggle('walking', move.state === 'walking');
+  floppaPet.classList.toggle('napping', move.state === 'napping');
+  floppaPet.classList.toggle('eating', move.state === 'eating');
+  floppaPet.classList.toggle('facing-left', move.dir === -1 && move.state === 'walking');
+  yardStatus.textContent = move.state;
+}
+
+function setState(newState, duration) {
+  move.state = newState;
+  move.until = Date.now() + duration;
+  renderFloppa();
+}
+
+let lastDrain = Date.now();
+function tick() {
+  const now = Date.now();
+
+  if (now - lastDrain > 5000) {
+    floppa.hunger = clamp(floppa.hunger - 1, 0, 100);
+    lastDrain = now;
+    renderStats();
+    saveFloppa();
+  }
+
+  if (now > move.until) {
+    if (move.state === 'eating') {
+      setState('walking', 3000 + Math.random() * 4000);
+      log('floppa is satisfied. resumes vibing.');
+    } else if (move.state === 'walking') {
+      if (Math.random() < 0.35) {
+        setState('napping', 4000 + Math.random() * 6000);
+        log('floppa decided to nap. nonchalant move.');
+      } else {
+        move.dir *= -1;
+        move.until = now + 3000 + Math.random() * 4000;
+        renderFloppa();
+      }
+    } else if (move.state === 'napping') {
+      move.dir = Math.random() < 0.5 ? 1 : -1;
+      setState('walking', 3000 + Math.random() * 4000);
+      log('floppa wakes up. unbothered. shades stay on.');
+    }
+  }
+
+  if (move.state === 'walking') {
+    const speed = floppa.hunger < 30 ? 0.45 : 0.28;
+    move.x += move.dir * speed;
+    if (move.x < 5) { move.x = 5; move.dir = 1; renderFloppa(); }
+    if (move.x > 88) { move.x = 88; move.dir = -1; renderFloppa(); }
+    floppaPet.style.left = move.x + '%';
+  }
+}
+setInterval(tick, 50);
+
+function feedChicken(amount, source) {
+  floppa.hunger = clamp(floppa.hunger + amount, 0, 100);
+  floppa.chicken += 1;
+  saveFloppa();
+  renderStats();
+  setState('eating', 1800);
+  if (source === 'auto') log('chat triggered chicken delivery. floppa eats.');
+  else if (source === 'bar') log('you filled the bar. floppa accepts.');
+  else log('chicken deployed. floppa is munching.');
+}
+function autoFeedChicken() { feedChicken(15, 'auto'); }
+
+document.getElementById('feedBtn').addEventListener('click', () => feedChicken(20, 'manual'));
+
+hungerWrap.addEventListener('click', e => {
+  const rect = hungerWrap.getBoundingClientRect();
+  const pct = clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100);
+  if (pct > floppa.hunger) {
+    const diff = pct - floppa.hunger;
+    floppa.hunger = pct;
+    floppa.chicken += 1;
+    saveFloppa();
+    renderStats();
+    setState('eating', 1800);
+    log(`bar filled to ${Math.round(pct)}%. floppa accepts. (+${Math.round(diff)})`);
+  } else {
+    floppa.hunger = clamp(floppa.hunger + 5, 0, 100);
+    saveFloppa();
+    renderStats();
+    log('small nibble. floppa nods. nothing more.');
+  }
+});
+
+let petCooldown = false;
+document.getElementById('petBtn').addEventListener('click', () => {
+  if (petCooldown) return;
+  petCooldown = true;
+  setTimeout(() => petCooldown = false, 350);
+  floppa.pets += 1;
+  saveFloppa();
+  renderStats();
+  const heart = document.createElement('div');
+  heart.className = 'heart-pop';
+  heart.textContent = '❤';
+  heart.style.left = move.x + '%';
+  heart.style.bottom = '130px';
+  yard.appendChild(heart);
+  setTimeout(() => heart.remove(), 900);
+  log('pet received. floppa allows it.');
+  if (Math.random() < 0.25 && move.state !== 'eating') {
+    setState('napping', 5000);
+  }
+});
+
+floppaPet.addEventListener('click', () => {
+  document.getElementById('petBtn').click();
+});
+
+renderStats();
+renderFloppa();
+
+document.getElementById('mascot').addEventListener('click', () => {
+  const noises = ['*purr*', '*chirp*', '*mrrp*', '*loaf intensifies*', '*adjusts shades*', '*me want chicken*'];
+  document.querySelector('[data-tab="chat"]').click();
+  setTimeout(() => addMsg(rand(noises), 'floppa'), 100);
+});
+</script>
+</body>
+</html>
